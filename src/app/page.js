@@ -10,8 +10,8 @@ export default function Home() {
     const fetchCustomers = async () => {
       try {
         const res = await tableDB.listRows({
-          databaseId: process.env.APPWRITE_DATABASE_ID,
-          tableId: process.env.APPWRITE_CUSTOMERS_TABLE_ID,
+          databaseId: '68cedbcf002f3396cecc',
+          tableId: 'customers',
         });
         setCustomers(res.documents);
       } catch (err) {
