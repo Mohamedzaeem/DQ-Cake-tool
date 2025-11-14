@@ -2,8 +2,47 @@
 
 import Link from "next/link";
  import React from 'react';
+ import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useCustomer } from "@/hooks/useCustomer";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AddCustomerPage() {
+  const {add} = useCustomer();
+   const { currentUser, loading } = useAuth();
+  const router = useRouter();
+
+
+  const handleAddCustomer = (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        add(
+            formData.get('FirstName'),
+            formData.get('LastName'),
+            formData.get('Email'),
+            formData.get('PhoneNumber'),
+            formData.get('DateOrdered'),
+            formData.get('Description')
+        );
+
+
+        form.reset();
+        router.replace("/");
+    };
+
+
+    const hasRedirected = useRef(false);         // 5️⃣ Hook
+  
+    useEffect(() => {
+      if (!loading && !currentUser && !hasRedirected.current) {
+        hasRedirected.current = true;
+        router.replace("/login");
+      }
+    }, [currentUser, loading, router]);
+  
+ if (loading) return <div>Loading...</div>;
+
   return (
     <div className="form-page">
         <div className="wrap">
@@ -19,7 +58,7 @@ export default function AddCustomerPage() {
       <br></br>
 
     <div className="form-card">
-      <form id="addCustomerForm">
+      <form id="addCustomerForm" onSubmit={handleAddCustomer}>
         <div className="form-group">
           <label for="FirstName">First Name</label>
           <input type="text" id="FirstName" name="FirstName" required />
@@ -32,7 +71,7 @@ export default function AddCustomerPage() {
 
         <div className="form-group">
           <label for="Email">Email</label>
-          <input type="email" id="Email" name="Email" required />
+          <input type="email" id="Email" name="Email" />
         </div>
 
         <div className="form-group">
